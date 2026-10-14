@@ -1,0 +1,48 @@
+{
+  "batch_id": "MDC_PLANEWAVE_EXAMPLE_001",
+  "project_id": "blue_apcd_mdc_planewave_sweep",
+  "batch_type": "fdtd_3d",
+  "jobs": [
+    {
+      "job_id": "MDC_T450_D350",
+      "attempt_id": "attempt_001",
+      "input_fsp": "D:/apcd_runtime/mdc/setups/mdc_t450_d350.fsp",
+      "output_dir": "D:/apcd_runtime/mdc/results/t450_d350",
+      "solver_backend": "lumerical_fdtd_gpu",
+      "resources": {
+        "gpu_count": 1,
+        "estimated_memory_gb": 4
+      },
+      "profile": "mdc_transmission_v1",
+      "metadata": {
+        "thickness_nm": 450,
+        "diameter_nm": 350,
+        "description": "MDC planewave transmission at t=450nm, d=350nm"
+      }
+    },
+    {
+      "job_id": "MDC_T450_D360",
+      "attempt_id": "attempt_001",
+      "input_fsp": "D:/apcd_runtime/mdc/setups/mdc_t450_d360.fsp",
+      "output_dir": "D:/apcd_runtime/mdc/results/t450_d360",
+      "solver_backend": "lumerical_fdtd_gpu",
+      "resources": {
+        "gpu_count": 1,
+        "estimated_memory_gb": 4
+      },
+      "profile": "mdc_transmission_v1",
+      "metadata": {
+        "thickness_nm": 450,
+        "diameter_nm": 360,
+        "description": "MDC planewave transmission at t=450nm, d=360nm"
+      }
+    }
+  ],
+  "max_entries": 2,
+  "recovery_strategy": "fail_closed",
+  "authorization": {
+    "granted_by": "user",
+    "granted_at": "2025-01-09T00:00:00Z",
+    "authorization_id": "AUTH_MDC_001"
+  }
+}

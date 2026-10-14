@@ -1,0 +1,23 @@
+{
+  "batch_id": "TEST_DEMO_BATCH_001",
+  "project_id": "generic_runner_demo",
+  "batch_type": "fdtd_3d",
+  "jobs": [
+    {
+      "job_id": "DEMO_JOB_001",
+      "attempt_id": "attempt_001",
+      "input_fsp": "demo_test.fsp",
+      "output_dir": "runner_data/demo_output",
+      "solver_backend": "lumerical_fdtd_gpu",
+      "resources": {
+        "gpu_count": 1,
+        "estimated_memory_gb": 4
+      },
+      "metadata": {
+        "description": "Demo job for testing generic runner"
+      }
+    }
+  ],
+  "max_entries": 1,
+  "recovery_strategy": "fail_closed"
+}

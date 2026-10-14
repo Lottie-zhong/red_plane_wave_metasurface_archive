@@ -1,0 +1,33 @@
+{
+  "batch_id": "COUPLING_ML_K6V3_EXAMPLE_001",
+  "project_id": "blue_apcd_mdc_np_coupling_ml_v1",
+  "batch_type": "fdtd_3d",
+  "jobs": [
+    {
+      "job_id": "K6V3_G001_EXAMPLE",
+      "attempt_id": "attempt_001",
+      "input_fsp": "D:/apcd_runtime/coupling_ml/setups/G001_5nm.fsp",
+      "output_dir": "D:/apcd_runtime/coupling_ml/results/G001",
+      "solver_backend": "lumerical_fdtd_gpu",
+      "resources": {
+        "gpu_count": 1,
+        "estimated_memory_gb": 6
+      },
+      "physics_contract_sha256": "51212d0c69f2112add3ee4008eb51a8aa94e380c39624d93d31e5f75e7be0e36",
+      "profile": "coupling_609d_v1",
+      "metadata": {
+        "geometry_type": "K6V3",
+        "mesh_size_nm": 5,
+        "simulation_time_ps": 3,
+        "description": "K6V3 geometry coupling test with 5nm mesh"
+      }
+    }
+  ],
+  "max_entries": 1,
+  "recovery_strategy": "fail_closed",
+  "authorization": {
+    "granted_by": "user",
+    "granted_at": "2025-01-09T00:00:00Z",
+    "authorization_id": "AUTH_COUPLING_ML_001"
+  }
+}
