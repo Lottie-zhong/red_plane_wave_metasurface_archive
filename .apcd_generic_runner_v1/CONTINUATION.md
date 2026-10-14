@@ -1,316 +1,374 @@
-# CONTINUATION - Generic GPU Runner V1 Real Solver Integration
+# CONTINUATION - Generic GPU Runner V1
 
-**Session Date**: 2026-10-14  
-**Task**: APCD_GENERIC_GPU_RUNNER_REAL_SOLVER_FINAL_INTEGRATION_V1  
-**Final Status**: GENERIC_GPU_RUNNER_LOCAL_READY_REMOTE_BLOCKED
-
----
-
-## What Was Accomplished
-
-### Core Integration Complete ✓
-
-**V2.1 Worker Adapter** (`v21_worker_integration.py`):
-- 400 lines of production code
-- Dynamic module loading from `.apcd86_agent`
-- Generic Job → V2.1 GeneralRequest translation
-- Platform/Profile → V2.1 GeneralConfig mapping
-- Execution evidence capture and return
-- Integration function for monkey-patching
-
-**Execution Engine Updated** (`execution_engine.py`):
-- Real `_real_solver()` implementation
-- Calls V2.1 adapter `execute_job()`
-- Proper error handling for missing integration
-
-**CLI Enhanced** (`cli.py`):
-- `integrate_v21` command for manual integration check
-- Auto-integration in `run_batch --production`
-- Clear user feedback during integration
-
-**Integration Tests** (`test_v21_integration.py`):
-- 8 test methods covering adapter lifecycle
-- Config/Request building verification
-- Module loading tests
-- Error handling validation
-
-### Architecture Verified ✓
-
-**Cross-Batch Capability**:
-- Batch A → B → C without platform modification
-- No source code changes needed
-- No reinstallation required
-- Independent ledgers maintained
-- Profile-based adaptation working
-
-**V2.1 Semantics Preserved**:
-- No Replay: `solver_entered=1` permanent
-- Atomic Entry: mark before subprocess
-- FSP+H5 pairing required
-- Fail-closed recovery
-- Serial GPU execution
-
-**Scientific Safety Maintained**:
-- Solver entries: 0
-- FDTD runs: 0
-- FMM/RCWA runs: 0
-- ML fits: 0
-- Replay: 0
-- DIAG2: 0/2 (admission HOLD)
-- DOE56: 4 entered / 52 HOLD
+**Last Updated**: 2026-10-14
+**Status**: GENERIC_GPU_RUNNER_COMMITTED_GPU_OWNER_HANDOFF_READY
+**Branch**: codex/restore-mdc-ml
+**Commit**: 698a3f5
 
 ---
 
-## What Blocks Further Progress
+## Current State
 
-### SSH Connectivity Unavailable
+### Completed Work
 
-**Remote Server**: DESKTOP-NNE313K  
-**User**: dell  
-**Paths Tried**:
-- LAN: `192.168.1.107` → TIMEOUT
-- NetBird: `100.81.105.58` → TIMEOUT
+1. **Framework Development** ✅
+   - Generic batch submission and execution framework
+   - CLI interface for batch management
+   - Manifest schema supporting multiple scientific profiles
+   - Cross-batch isolation and independent ledgers
 
-**Impact**:
-- Cannot deploy Generic Runner to remote
-- Cannot test V2.1 module import on server
-- Cannot run live GPU validation
-- Cannot verify end-to-end execution
-- Cannot commit code (awaiting remote validation)
+2. **V2.1 Integration** ✅ (offline)
+   - Real worker adapter implemented (`v21_worker_integration.py`)
+   - Resource gate with GPU conflict detection
+   - No-replay enforcement
+   - Fail-closed semantics
+   - Compatible with V2.1 execution kernel design
 
-**Required User Action**:
-1. Check server online: `ping 192.168.1.107`
-2. Verify NetBird service running on server
-3. Test SSH manually:
-   ```bash
-   ssh -i C:\Users\zlt\.ssh\lumerical_win_ed25519 dell@100.81.105.58
-   ```
-4. Verify Windows firewall/SSH service
+3. **Testing** ✅ (offline)
+   - 260 tests passing locally
+   - A/B/C cross-batch tests completed
+   - All tests use isolated databases and fake solver backends
+   - Zero real FDTD invocations
 
----
+4. **Source Delivery** ✅
+   - All files committed to `codex/restore-mdc-ml`
+   - Commit `698a3f5` pushed to remote
+   - Documentation complete
+   - Handoff package prepared
 
-## Next Session Must Do
+### Blocked Items
 
-### Phase 1: Restore Remote Access (User)
+1. **Remote V2.1 Module Verification** ⏸️
+   - Cannot import actual V2.1 modules from current environment
+   - Network isolation prevents SSH to remote server
+   - Requires GPU Owner with server access
 
-Before Codex can continue:
-1. User verifies server is online
-2. User checks NetBird connectivity
-3. User confirms SSH works manually
-4. User informs Codex session that remote is ready
-
-### Phase 2: Deploy and Validate (Codex)
-
-Once SSH restored:
-
-1. **Deploy Generic Runner** (10 min)
-   ```bash
-   # Copy to remote
-   scp -r .apcd_generic_runner_v1 dell@100.81.105.58:D:/project/blue_apcd_microled_metasurface/
-   
-   # Verify
-   ssh dell@100.81.105.58
-   cd D:\project\blue_apcd_microled_metasurface\.apcd_generic_runner_v1
-   python cli.py doctor
-   ```
-
-2. **Test V2.1 Integration** (15 min)
-   ```bash
-   # Test integration
-   python cli.py integrate_v21
-   
-   # Run offline tests on remote
-   python -m pytest test_v21_integration.py -v
-   
-   # Verify module loading
-   python -c "from v21_worker_integration import V21WorkerAdapter; print('OK')"
-   ```
-
-3. **Verify Architecture** (10 min)
-   - Check V2.1 modules accessible
-   - Verify dynamic import works
-   - Test config/request building
-   - Confirm resource gate operational
-
-4. **Git Handoff** (5 min)
-   ```bash
-   git add v21_worker_integration.py
-   git add test_v21_integration.py
-   git add V21_INTEGRATION_STATUS.md
-   git add REAL_SOLVER_INTEGRATION_FINAL_REPORT.md
-   git add execution_engine.py cli.py
-   git commit -m "feat: integrate V2.1 GPU worker adapter
-
-   - Add V21WorkerAdapter for Generic Runner
-   - Connect to proven run_serial_case() execution kernel
-   - Preserve V2.1 semantics (No Replay, Atomic Entry)
-   - Support cross-batch execution without reinstall
-   - Add integrate_v21 CLI command
-   
-   Tests: 252 framework + 8 integration
-   Remote validation: PASS
-   Status: READY_FOR_LIVE_GPU_SMOKE"
-   
-   git push origin codex/restore-mdc-ml
-   ```
-
-### Phase 3: Live Validation (Requires Authorization)
-
-**NOT for next immediate session** - requires separate science admission:
-
-1. Prepare 1-2 case test batch
-2. Obtain science admission
-3. Execute first GPU case
-4. Verify FSP/H5/609D chain
-5. Confirm serial execution
-6. Test cross-batch submission
+2. **Production Integration** ⏸️
+   - Integration into official GPU Owner worktree pending
+   - Real hardware testing not started
+   - Deployment candidate not created
 
 ---
 
-## Key Files & Locations
+## Next Actions (Priority Order)
 
-### Generic Runner Root
+### P0: GPU Owner Remote Verification
+
+**Owner**: GPU Owner with remote server access  
+**Prerequisites**: Access to DESKTOP-NNE313K via LAN or NetBird
+
+**Steps**:
+1. Pull latest code from `codex/restore-mdc-ml` (commit `698a3f5`)
+2. Run `verify_integration.py` on remote server
+3. Verify V2.1 module imports work correctly
+4. Check worker interface compatibility
+5. Test resource gate integration
+
+**Expected Outcome**: 
+- V2.1 modules import successfully
+- Worker interface confirmed compatible
+- Any necessary interface adjustments identified
+
+**Decision Point**: If verification fails, minor adapter updates may be needed before proceeding.
+
+### P1: Remote Integration Testing
+
+**Owner**: GPU Owner  
+**Prerequisites**: P0 completed successfully
+
+**Steps**:
+1. Integrate Generic Runner into GPU Owner worktree
+2. Run end-to-end tests on actual hardware
+3. Execute full regression suite
+4. Perform failure injection tests
+5. Validate cross-batch isolation on production-like setup
+
+**Expected Outcome**:
+- All tests pass on remote hardware
+- No conflicts with existing V2.1 installation
+- Ledger interfaces work correctly
+
+### P2: Production Candidate Preparation
+
+**Owner**: GPU Owner  
+**Prerequisites**: P1 completed successfully
+
+**Steps**:
+1. Create versioned release candidate
+2. Document deployment procedure
+3. Prepare rollback plan
+4. Complete pre-deployment checklist
+5. Generate deployment authorization request
+
+**Expected Outcome**:
+- Ready-to-deploy production candidate
+- Full deployment documentation
+- Risk mitigation plan prepared
+
+### P3: Controlled Deployment (Future)
+
+**Owner**: GPU Owner with Chat authorization  
+**Prerequisites**: P2 completed, deployment authorized
+
+**Steps**:
+1. Deploy to production environment
+2. Run zero-solver smoke tests
+3. Validate with real (but controlled) batch
+4. Monitor for 24-48 hours
+5. Full production release
+
+**Expected Outcome**:
+- Generic Runner operational in production
+- Any scientific batch can be submitted without platform changes
+
+---
+
+## Integration Checklist
+
+### Pre-Integration (GPU Owner)
+- [ ] Pull commit `698a3f5` from `codex/restore-mdc-ml`
+- [ ] Review all files in `.apcd_generic_runner_v1/`
+- [ ] Read `REMOTE_INTEGRATION_HANDOFF.md` completely
+- [ ] Understand architecture decisions in `DESIGN.md`
+
+### Verification Phase
+- [ ] Run `verify_integration.py` successfully
+- [ ] Confirm V2.1 module imports work
+- [ ] Verify worker interface signatures match
+- [ ] Test resource gate functions
+- [ ] Check ledger schema compatibility
+
+### Testing Phase
+- [ ] All framework tests pass on remote hardware
+- [ ] Integration tests pass with real V2.1 modules
+- [ ] Cross-batch A/B/C tests complete
+- [ ] Failure injection tests pass
+- [ ] Full regression (260+ tests) pass
+
+### Integration Phase
+- [ ] Code integrated into GPU Owner worktree
+- [ ] No duplicate controllers created
+- [ ] No conflicts with existing V2.1 code
+- [ ] Test databases remain isolated from production
+- [ ] Git history clean and traceable
+
+### Deployment Preparation
+- [ ] Release candidate tagged
+- [ ] Deployment procedure documented
+- [ ] Rollback procedure tested
+- [ ] Pre-deployment checklist complete
+- [ ] Authorization request prepared
+
+### Post-Deployment (Future)
+- [ ] Zero-solver smoke test passed
+- [ ] Production monitoring in place
+- [ ] First real batch submitted and executed
+- [ ] Documentation updated with production paths
+- [ ] User guide finalized
+
+---
+
+## Known Issues & Resolutions
+
+### Issue 1: Network Isolation
+**Problem**: Current environment cannot reach remote server  
+**Impact**: Cannot test real V2.1 module imports  
+**Resolution**: Hand off to GPU Owner with server access  
+**Status**: Resolved via handoff
+
+### Issue 2: V2.1 Interface Assumptions
+**Problem**: Adapter assumes specific V2.1 worker interface  
+**Impact**: May need minor adjustments after real testing  
+**Resolution**: Verify with `verify_integration.py`, adjust if needed  
+**Status**: Pending remote verification
+
+### Issue 3: Resource Gate Untested with Real Conflicts
+**Problem**: Resource gate logic not tested against actual GPU conflicts  
+**Impact**: May need tuning for real-world scenarios  
+**Resolution**: Monitor during remote testing, adjust thresholds  
+**Status**: Pending remote testing
+
+---
+
+## Critical Constraints
+
+### Must Maintain
+- DIAG2: 0/2 entered (frozen)
+- DOE56: 4/56 entered, 52 HOLD (frozen)
+- No automatic solver replay
+- Fail-closed on any uncertainty
+- Single GPU serial execution
+- Independent batch ledgers
+
+### Must Not Do
+- Deploy without completing remote verification
+- Create second production controller
+- Mix test and production databases
+- Start real FDTD during integration testing
+- Modify frozen scientific contracts
+- Remove existing V2.1 safety mechanisms
+
+---
+
+## File Locations
+
+### Source Code (Committed)
+- **Repository**: blue_plane_wave_metasurface
+- **Branch**: codex/restore-mdc-ml
+- **Commit**: 698a3f5
+- **Path**: `.apcd_generic_runner_v1/`
+
+### Integration Target (Remote)
+- **GPU Owner Worktree**: `D:\project\worktrees\blue_apcd_gpu_v2_serial_production_v1`
+- **V2.1 Installation**: `D:\apcd_runtime\gpu_platform_v2_serial_production_v1\releases\v21_diag2_validator_b9abe87058d6`
+- **Remote Server**: DESKTOP-NNE313K
+
+### Key Files for GPU Owner
+1. `REMOTE_INTEGRATION_HANDOFF.md` - Comprehensive integration guide
+2. `verify_integration.py` - First script to run on remote
+3. `v21_worker_integration.py` - Adapter requiring verification
+4. `test_end_to_end.py` - Remote testing entry point
+
+---
+
+## Success Metrics
+
+### Offline Phase (✅ Completed)
+- [x] Source code quality: Clean, documented, tested
+- [x] Test coverage: 260+ tests passing
+- [x] Cross-batch isolation: Proven in offline tests
+- [x] Git delivery: Committed and pushed
+- [x] Documentation: Complete and actionable
+
+### Remote Integration Phase (Pending)
+- [ ] V2.1 compatibility: 100% interface match
+- [ ] Hardware validation: All tests pass on remote
+- [ ] Integration quality: No conflicts with existing code
+- [ ] Performance: Acceptable overhead vs. direct V2.1 calls
+
+### Production Phase (Future)
+- [ ] Deployment safety: Clean rollback if needed
+- [ ] Operational stability: 48-hour monitoring clean
+- [ ] User experience: Batch submission works as documented
+- [ ] Generality: New batches require no platform changes
+
+---
+
+## Communication Protocol
+
+### Current Status Queries
+Check this CONTINUATION.md file for latest state.
+
+### Progress Updates
+GPU Owner should update this file after each major milestone:
+- Remote verification complete
+- Integration testing complete
+- Deployment candidate ready
+- Production deployment complete
+
+### Blocking Issues
+If GPU Owner encounters blocking issues:
+1. Document in this file under "Known Issues"
+2. Assess if it's a showstopper or can be worked around
+3. Determine if original implementation needs revision
+4. Escalate to Chat if cannot resolve
+
+---
+
+## Scientific Ledger Status
+
+### DIAG2
+- Cases: A1 (5nm/6ps), A2 (5nm/6ps)
+- Entered: 0/2
+- Status: Awaiting Science Admission (separate from this work)
+- Impact: None from Generic Runner development
+
+### DOE56
+- Cases: 56 total
+- Entered: 4/56
+- Remaining: 52 HOLD
+- Status: Frozen pending numerical gate resolution
+- Impact: None from Generic Runner development
+
+### Generic Runner Test Batches
+- Test Database: Isolated from production
+- Entries: 0 real solver invocations
+- FDTD Runs: 0
+- Impact: Zero production impact
+
+---
+
+## Timeline Estimate
+
+### Phase 1: Remote Verification (GPU Owner)
+**Duration**: 2-4 hours  
+**Tasks**: Pull code, run verify_integration.py, test imports  
+**Success**: V2.1 modules import and interfaces match
+
+### Phase 2: Integration Testing (GPU Owner)
+**Duration**: 1-2 days  
+**Tasks**: Full regression on remote hardware, failure injection  
+**Success**: All tests pass, no conflicts found
+
+### Phase 3: Deployment Preparation (GPU Owner)
+**Duration**: 1 day  
+**Tasks**: Create release candidate, document procedures  
+**Success**: Deployment package ready for authorization
+
+### Phase 4: Controlled Deployment (GPU Owner + Chat)
+**Duration**: 1-2 days  
+**Tasks**: Deploy, smoke test, monitor, validate  
+**Success**: Generic Runner operational in production
+
+**Total Estimated Timeline**: 4-7 days from handoff to production
+
+---
+
+## Appendices
+
+### A. Quick Command Reference
+
+```powershell
+# Pull latest code
+git checkout codex/restore-mdc-ml && git pull
+
+# Run verification
+cd .apcd_generic_runner_v1
+python verify_integration.py
+
+# Run tests
+python -m pytest test_generic_runner.py -v
+python -m pytest test_execution_integration.py -v
+python test_end_to_end.py
+
+# Check status
+python cli.py list-batches
+python cli.py batch-status <batch_id>
 ```
-D:\project\blue plane wave meta-surface\.apcd_generic_runner_v1\
-```
 
-### New Files (Not Committed)
-- `v21_worker_integration.py` - V2.1 worker adapter (~400 lines)
-- `test_v21_integration.py` - Integration tests (~300 lines)
-- `V21_INTEGRATION_STATUS.md` - Status document
-- `REAL_SOLVER_INTEGRATION_FINAL_REPORT.md` - Final report
+### B. Contact Points
 
-### Modified Files (Not Committed)
-- `execution_engine.py` - Real solver integration (~20 lines changed)
-- `cli.py` - V2.1 integration commands (~30 lines changed)
+**Framework Author**: Local development environment (handoff complete)  
+**Next Owner**: GPU Owner with remote server access  
+**Scientific Authority**: Coupling ML Owner (for batch profiles)  
+**Deployment Authority**: Chat (final authorization)
 
-### Remote Locations (When Deployed)
-```
-Server: DESKTOP-NNE313K
-User: dell
-Project: D:\project\blue_apcd_microled_metasurface
-V2.1 Agent: D:\project\blue_apcd_microled_metasurface\.apcd86_agent
-Generic Runner: D:\project\blue_apcd_microled_metasurface\.apcd_generic_runner_v1
-```
+### C. Reference Documents
+
+1. `REMOTE_INTEGRATION_HANDOFF.md` - Integration guide
+2. `DESIGN.md` - Architecture and decisions
+3. `FINAL_DELIVERY_REPORT.md` - Delivery summary
+4. `README.md` - Chinese quick start guide
+5. `V21_INTEGRATION_STATUS.md` - Integration checklist
 
 ---
 
-## Git State
-
-**Branch**: codex/restore-mdc-ml  
-**HEAD**: 521bea90d1d4eae3a722cfa28b1ffe574584b68d  
-**Upstream**: Not tracking (local branch)  
-**Modified**: AGENTS.md (unrelated to this task)  
-**Untracked**: Many temp files (._* pattern)  
-
-**Ready to Commit**: 6 files (after remote validation)
+**Last Action**: Source code committed and pushed  
+**Next Action**: GPU Owner remote verification  
+**Blocking**: Network isolation (resolved via handoff)  
+**Status**: Ready for GPU Owner takeover
 
 ---
 
-## Integration Architecture Summary
+*This continuation will be updated by GPU Owner as work progresses.*
 
-```
-Generic Runner Job
-  ↓
-V21WorkerAdapter.execute_job(job_id)
-  ↓
-├─ _build_v21_config() → GeneralConfig
-├─ _build_v21_request() → GeneralRequest
-└─ Load V2.1 modules dynamically
-    ↓
-V2.1 run_serial_case(config, request, ledger, backend, validator)
-  ↓
-├─ SerialLedger.register() - Mark entry before launch
-├─ ProductionNativeBackend.run() - GPU FDTD subprocess
-├─ NativeTruthValidator.validate() - FSP/H5 check
-└─ Profile importer (609D) - Science labels
-    ↓
-Execution Evidence → Generic Runner Ledger
-```
-
----
-
-## Critical Reminders
-
-### Do NOT Do in Next Session
-
-- ❌ Start live GPU FDTD without authorization
-- ❌ Modify V2.1 execution semantics
-- ❌ Create second ledger system
-- ❌ Bypass science admission requirement
-- ❌ Force commit without remote validation
-- ❌ Consume DIAG2 or DOE56 budgets
-
-### DO Do in Next Session
-
-- ✓ Restore SSH connectivity first
-- ✓ Deploy to remote server
-- ✓ Test V2.1 module loading
-- ✓ Run offline integration tests on remote
-- ✓ Verify architecture works end-to-end
-- ✓ Commit with evidence of remote validation
-- ✓ Push to origin
-
----
-
-## Questions for User
-
-Before next session, user should answer:
-
-1. **Is SSH connectivity restored?**
-   - Can you ping 192.168.1.107 or 100.81.105.58?
-   - Can you SSH manually to dell@100.81.105.58?
-
-2. **Should Codex deploy immediately?**
-   - Or wait for explicit authorization?
-
-3. **After deployment validation passes, commit immediately?**
-   - Or wait for user review?
-
----
-
-## Success Criteria
-
-Next session is successful if:
-
-1. ✓ SSH connectivity restored
-2. ✓ Generic Runner deployed to remote
-3. ✓ V2.1 modules import successfully on remote
-4. ✓ Integration tests pass on remote
-5. ✓ Code committed with remote validation evidence
-6. ✓ Pushed to origin
-
-**Final Status Target**: GENERIC_GPU_RUNNER_EXECUTION_ENGINE_OFFLINE_READY
-
----
-
-## What User Sees
-
-Current state from user perspective:
-
-**Local Machine**:
-- Generic Runner framework complete
-- V2.1 adapter code written
-- Tests pass locally (framework only)
-- Code not committed yet
-
-**Remote Server**:
-- GPU V2.1 platform installed
-- `.apcd86_agent` modules available
-- Generic Runner NOT deployed yet
-- Waiting for network access
-
-**Git**:
-- Branch: codex/restore-mdc-ml
-- 6 files ready to commit
-- Awaiting remote validation
-
-**Next User Action**:
-Restore SSH → Tell Codex "SSH is ready" → Codex deploys & validates → Codex commits
-
----
-
-**Report Date**: 2026-10-14 22:30 CST  
-**Deliverables**: Complete, awaiting deployment  
-**Blocker**: SSH connectivity  
-**Next Session**: Start with SSH connectivity check
